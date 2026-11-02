@@ -90,6 +90,19 @@ def unseen(conn: IMAPClient, mailbox: str) -> int:
     return conn.folder_status(mailbox, ["UNSEEN"])[b"UNSEEN"]
 
 
+def left_mailbox(conn: IMAPClient, mailbox: str, message_id: str, within: float = 10) -> bool:
+    """Whether the message leaves the mailbox in time. The connector's side effects
+    reach gluon on its next update tick, so they land after the command returns."""
+    deadline = time.monotonic() + within
+    while True:
+        conn.select_folder(mailbox, readonly=True)
+        if conn.search(["HEADER", "Message-ID", message_id]) == []:
+            return True
+        if time.monotonic() >= deadline:
+            return False
+        time.sleep(0.05)
+
+
 SEED = [
     # (mailbox, fixture, day offset, flags, internal id)
     ("INBOX", "qp-utf8.eml", 30, (), "g-qp=="),
@@ -290,8 +303,7 @@ def test_organize_on_gluon(gluon: Gluon, mail: Mail) -> None:
     # label view moved it out of INBOX into the folder; the label is gone.
     conn.select_folder("Folders/Receipts", readonly=True)
     assert conn.search(["HEADER", "Message-ID", "latin1-1@example.com"]) != []
-    conn.select_folder("INBOX", readonly=True)
-    assert conn.search(["HEADER", "Message-ID", "latin1-1@example.com"]) == []
+    assert left_mailbox(conn, "INBOX", "latin1-1@example.com")
 
 
 def test_structure_on_gluon(mail: Mail) -> None:
