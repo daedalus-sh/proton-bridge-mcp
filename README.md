@@ -65,7 +65,7 @@ Requirements: Proton Mail Bridge (desktop or headless) logged in, Python 3.12+
 and the dependencies in `pyproject.toml`, or Nix:
 
 ```sh
-nix run github:santiagotoscanini/proton-bridge-mcp      # or: nix build
+nix run github:daedalus-sh/proton-bridge-mcp      # or: nix build
 ```
 
 The server listens on `PROTON_MCP_LISTEN` (default `0.0.0.0:8080`): MCP at

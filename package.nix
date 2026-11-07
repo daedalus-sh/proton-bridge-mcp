@@ -56,7 +56,7 @@ python3Packages.buildPythonApplication {
 
   meta = {
     description = "MCP server for Proton Mail through Proton Mail Bridge: read, organize, draft; sends only calendar replies";
-    homepage = "https://github.com/santiagotoscanini/proton-bridge-mcp";
+    homepage = "https://github.com/daedalus-sh/proton-bridge-mcp";
     license = lib.licenses.mit;
     mainProgram = "proton-mcp";
     platforms = lib.platforms.linux;
